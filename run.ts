@@ -9,18 +9,22 @@ import {
   ZMachine,
   SignatureRequest,
   SignatureRequirement,
+  ComputeCapacity,
+  DiskMount,
 } from "./client";
 
 async function main() {
   const grid = new GridClient();
 
+  const mountDisk = new DiskMount({
+    name: "disk1",
+    mountpoint: "/mnt/data",
+  },)
+
   const zmount = new ZMount({
     size: 152154151,
     mounts: [
-      {
-        name: "disk1",
-        mountpoint: "/mnt/data",
-      },
+      mountDisk
     ],
   });
 
@@ -32,10 +36,10 @@ async function main() {
     wireguard_private_key: "",
   });
 
-  const computeCapacity: ComputeCapacityData = {
+  const computeCapacity = new ComputeCapacity({
     cpu: 1,
     memory: 2048,
-  };
+  });
 
   const zmachine = new ZMachine({
     flist: "https://hub.grid.tf/tf-official-vms/ubuntu-20.04-lts.flist",
@@ -46,8 +50,8 @@ async function main() {
       Key: "Value",
     },
     gpu: [],
-    mounts: zmount.meta.mounts,
-    network: znet.meta,
+    mounts: zmount.mounts,
+    network: znet,
     size: 45411,
   });
 
@@ -70,11 +74,37 @@ async function main() {
   })
 
   // Set the network workload
-  workload.set(WorkloadTypes.network, znet.meta)
-  // Set the network workload
-  workload.set(WorkloadTypes.zmount, zmount.meta)
+  workload.set({
+    description: "Setting network",
+    metadata: "MetaData",
+    name: "MyNet",
+    version: 0,
+    data: znet,
+    type: WorkloadTypes.network
+  })
+  
+  // Set the zmount workload
+  workload.set({
+    description: "Setting zmount",
+    metadata: "MetaData",
+    name: "MyZmount",
+    version: 0,
+    data: zmount,
+    type: WorkloadTypes.zmount
+  })
+  
   // Set the zmachine workload
-  workload.set(WorkloadTypes.zmachine, zmachine.meta)
+  workload.set({
+    description: "Setting zmachine",
+    metadata: "MetaData",
+    name: "MyZmachine",
+    version: 0,
+    data: zmachine,
+    type: WorkloadTypes.zmachine
+  })
+
+  console.log("workloads", workload.all());
+  
 
   const deployment = new Deployment({
     description: "Some description",
@@ -82,12 +112,14 @@ async function main() {
     metadata: "",
     twin_id: 143,
     version: 0,
-    workloads: workload.getAllWorkloads(),
+    workloads: workload.all(),
     signatureRequirement: signatureRequirement,
   });
 
-  await grid.connect()
-  await grid.deploy({ deployment: deployment });
+  console.log("workloads", workload.allData());
+  
+  // await grid.connect()
+  // await grid.deploy({ deployment: deployment });
 }
 
 main();

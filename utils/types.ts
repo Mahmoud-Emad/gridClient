@@ -1,4 +1,4 @@
-import { Deployment } from "../client";
+import { Deployment, Network, SignatureRequirement, Workload, ZMachine, ZMount, ComputeCapacity, DiskMount } from "../client";
 
 export interface DeploymentOptions {
   version: number;
@@ -6,8 +6,8 @@ export interface DeploymentOptions {
   metadata: string;
   description: string;
   expiration: number;
-  workloads: WorkloadData[];
-  signatureRequirement: SignatureRequirementData
+  workloads: Workload[];
+  signatureRequirement: SignatureRequirement
 }
 
 export interface GridSetOptions {
@@ -18,7 +18,7 @@ export interface WorkloadData {
   version: number;
   name: string;
   type?: WorkloadTypes;
-  data?: ZMountData | NetworkData | ZMachineData;
+  data?: ZMount | Network | ZMachine;
   metadata: string;
   description: string;
 }
@@ -33,7 +33,7 @@ export interface NetworkData {
 
 export interface ZMountData {
   size: number;
-  mounts: DiskMountData[];
+  mounts: DiskMount[];
 }
 
 export interface DiskMountData {
@@ -50,11 +50,11 @@ export interface GPUData {}
 
 export interface ZMachineData {
   flist: string;
-  network: NetworkData;
+  network: Network;
   size: number; // Root file system
-  mounts: DiskMountData[];
+  mounts: DiskMount[];
   entrypoint: string;
-  compute_capacity: ComputeCapacityData;
+  compute_capacity: ComputeCapacity;
   env: object;
   corex: boolean;
   gpu: GPUData[];

@@ -76,11 +76,36 @@ const workload = new Workload({
 });
 
 // Set the network workload
-workload.set(WorkloadTypes.network, znet.meta);
+workload.set({
+  description: "Setting network",
+  metadata: "MetaData",
+  name: "MyNet",
+  version: 0,
+  data: znet,
+  type: WorkloadTypes.network
+})
+
 // Set the zmount workload
-workload.set(WorkloadTypes.zmount, zmount.meta);
+workload.set({
+  description: "Setting zmount",
+  metadata: "MetaData",
+  name: "MyZmount",
+  version: 0,
+  data: zmount,
+  type: WorkloadTypes.zmount
+})
+
 // Set the zmachine workload
-workload.set(WorkloadTypes.zmachine, zmachine.meta);
+workload.set({
+  description: "Setting zmachine",
+  metadata: "MetaData",
+  name: "MyZmachine",
+  version: 0,
+  data: zmachine,
+  type: WorkloadTypes.zmachine
+})
+
+console.log("workloads", workload.all());
 ```
 
 #### Deploying Workloads
@@ -94,8 +119,10 @@ const deployment = new Deployment({
   metadata: "",
   twin_id: 143,
   version: 0,
-  workloads: workload.getAllWorkloads(),
+  workloads: workload.all(),
+  signatureRequirement: signatureRequirement,
 });
+
 
 await grid.deploy({ deployment: deployment });
 ```

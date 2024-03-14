@@ -6,7 +6,7 @@ import {
 } from "./utils/types";
 import { Validators, isClientConnected } from "./utils/validators";
 import { Deployment, SignatureRequest, SignatureRequirement } from "./workloads/deployment";
-import { Workload, ZMount, Network, ZMachine } from "./workloads/workloads";
+import { Workload, ZMount, Network, ZMachine, ComputeCapacity, DiskMount } from "./workloads/workloads";
 import AwaitLock from "await-lock";
 import { Client as RMBClient } from "@threefold/rmb_direct_client";
 
@@ -76,5 +76,7 @@ export {
   DeploymentOptions,
   GridSetOptions,
   SignatureRequest,
+  ComputeCapacity,
+  DiskMount,
   SignatureRequirement
 };
