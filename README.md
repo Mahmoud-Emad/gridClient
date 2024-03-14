@@ -9,7 +9,15 @@ This package provides a client interface (`GridClient`) for interacting with a g
 Import the necessary modules from the package to start using the `GridClient`.
 
 ```typescript
-import { GridClient, Deployment, Network, Workload, WorkloadTypes, ZMount, ZMachine } from "grid-client";
+import {
+  GridClient,
+  Deployment,
+  Network,
+  Workload,
+  WorkloadTypes,
+  ZMount,
+  ZMachine,
+} from "grid-client";
 ```
 
 #### Setting Up the Grid Client
@@ -82,8 +90,8 @@ workload.set({
   name: "MyNet",
   version: 0,
   data: znet,
-  type: WorkloadTypes.network
-})
+  type: WorkloadTypes.network,
+});
 
 // Set the zmount workload
 workload.set({
@@ -92,8 +100,8 @@ workload.set({
   name: "MyZmount",
   version: 0,
   data: zmount,
-  type: WorkloadTypes.zmount
-})
+  type: WorkloadTypes.zmount,
+});
 
 // Set the zmachine workload
 workload.set({
@@ -102,8 +110,8 @@ workload.set({
   name: "MyZmachine",
   version: 0,
   data: zmachine,
-  type: WorkloadTypes.zmachine
-})
+  type: WorkloadTypes.zmachine,
+});
 
 console.log("workloads", workload.all());
 ```
@@ -122,7 +130,6 @@ const deployment = new Deployment({
   workloads: workload.all(),
   signatureRequirement: signatureRequirement,
 });
-
 
 await grid.deploy({ deployment: deployment });
 ```
@@ -148,7 +155,15 @@ In case of errors, the package throws `ConnectionError` or other relevant errors
 Here's a sample usage of the package:
 
 ```typescript
-import { GridClient, Deployment, Network, Workload, WorkloadTypes, ZMount, ZMachine } from "grid-client";
+import {
+  GridClient,
+  Deployment,
+  Network,
+  Workload,
+  WorkloadTypes,
+  ZMount,
+  ZMachine,
+} from "grid-client";
 
 async function main() {
   const grid = new GridClient();

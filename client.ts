@@ -5,11 +5,21 @@ import {
   WorkloadTypes,
 } from "./utils/types";
 import { Validators, isClientConnected } from "./utils/validators";
-import { Deployment, SignatureRequest, SignatureRequirement } from "./workloads/deployment";
-import { Workload, ZMount, Network, ZMachine, ComputeCapacity, DiskMount } from "./workloads/workloads";
+import {
+  Deployment,
+  SignatureRequest,
+  SignatureRequirement,
+} from "./workloads/deployment";
+import {
+  Workload,
+  ZMount,
+  Network,
+  ZMachine,
+  ComputeCapacity,
+  DiskMount,
+} from "./workloads/workloads";
 import AwaitLock from "await-lock";
 import { Client as RMBClient } from "@threefold/rmb_direct_client";
-
 
 const chainURL = "wss://tfchain.dev.grid.tf/ws";
 const relayURL = "wss://relay.dev.grid.tf";
@@ -27,10 +37,17 @@ class GridClient {
   }
 
   async connect() {
-    const rmbClient = new RMBClient(chainURL, relayURL, mnemonic, "test", KeypairType.sr25519, 5)
+    const rmbClient = new RMBClient(
+      chainURL,
+      relayURL,
+      mnemonic,
+      "test",
+      KeypairType.sr25519,
+      5
+    );
     this.rmbClient = rmbClient;
-    this.rmbClient.connect()
-    this.log("Client connected!")
+    this.rmbClient.connect();
+    this.log("Client connected!");
     isClientConnected.value = true;
   }
 
@@ -59,10 +76,9 @@ class GridClient {
     console.log("Deleting...");
   }
 
-  log(message: string){
+  log(message: string) {
     console.log(`|+| ${message}`);
-  };
-  
+  }
 }
 
 export {
@@ -78,5 +94,5 @@ export {
   SignatureRequest,
   ComputeCapacity,
   DiskMount,
-  SignatureRequirement
+  SignatureRequirement,
 };

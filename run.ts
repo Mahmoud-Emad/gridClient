@@ -19,13 +19,11 @@ async function main() {
   const mountDisk = new DiskMount({
     name: "disk1",
     mountpoint: "/mnt/data",
-  },)
+  });
 
   const zmount = new ZMount({
     size: 152154151,
-    mounts: [
-      mountDisk
-    ],
+    mounts: [mountDisk],
   });
 
   const znet = new Network({
@@ -65,13 +63,13 @@ async function main() {
   const signatureRequest = new SignatureRequest({
     required: false,
     twin_id: 143,
-    weight: 1
-  })
+    weight: 1,
+  });
 
   const signatureRequirement = new SignatureRequirement({
     requests: [signatureRequest],
-    weight_required: 1
-  })
+    weight_required: 1,
+  });
 
   // Set the network workload
   workload.set({
@@ -80,9 +78,9 @@ async function main() {
     name: "MyNet",
     version: 0,
     data: znet,
-    type: WorkloadTypes.network
-  })
-  
+    type: WorkloadTypes.network,
+  });
+
   // Set the zmount workload
   workload.set({
     description: "Setting zmount",
@@ -90,9 +88,9 @@ async function main() {
     name: "MyZmount",
     version: 0,
     data: zmount,
-    type: WorkloadTypes.zmount
-  })
-  
+    type: WorkloadTypes.zmount,
+  });
+
   // Set the zmachine workload
   workload.set({
     description: "Setting zmachine",
@@ -100,11 +98,10 @@ async function main() {
     name: "MyZmachine",
     version: 0,
     data: zmachine,
-    type: WorkloadTypes.zmachine
-  })
+    type: WorkloadTypes.zmachine,
+  });
 
   console.log("workloads", workload.all());
-  
 
   const deployment = new Deployment({
     description: "Some description",
@@ -117,7 +114,7 @@ async function main() {
   });
 
   console.log("workloads", workload.allData());
-  
+
   // await grid.connect()
   // await grid.deploy({ deployment: deployment });
 }

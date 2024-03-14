@@ -1,4 +1,13 @@
-import { Deployment, Network, SignatureRequirement, Workload, ZMachine, ZMount, ComputeCapacity, DiskMount } from "../client";
+import {
+  Deployment,
+  Network,
+  SignatureRequirement,
+  Workload,
+  ZMachine,
+  ZMount,
+  ComputeCapacity,
+  DiskMount,
+} from "../client";
 
 export interface DeploymentOptions {
   version: number;
@@ -7,7 +16,7 @@ export interface DeploymentOptions {
   description: string;
   expiration: number;
   workloads: Workload[];
-  signatureRequirement: SignatureRequirement
+  signatureRequirement: SignatureRequirement;
 }
 
 export interface GridSetOptions {

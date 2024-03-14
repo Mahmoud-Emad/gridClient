@@ -1,10 +1,8 @@
 class ConnectionError extends Error {
   constructor(message: string) {
     super(message);
-    this.name = 'ConnectionError';
+    this.name = "ConnectionError";
   }
 }
 
-export {
-  ConnectionError
-}
+export { ConnectionError };

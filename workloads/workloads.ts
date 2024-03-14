@@ -122,8 +122,8 @@ class DiskMount implements DiskMountData {
   mountpoint: string;
 
   constructor(meta: DiskMountData) {
-    this.name = meta.name
-    this.mountpoint = meta.mountpoint
+    this.name = meta.name;
+    this.mountpoint = meta.mountpoint;
   }
 
   getData(): DiskMountData {
@@ -169,11 +169,11 @@ class ZMachine implements ZMachineData {
     out += `${this.compute_capacity.challenge()}`;
 
     for (let i = 0; i < this.mounts.length; i++) {
-      out += this.mounts[i].challenge()
+      out += this.mounts[i].challenge();
     }
 
     return out;
   }
 }
 
-export { Workload, ZMount, Network, ZMachine, ComputeCapacity, DiskMount};
+export { Workload, ZMount, Network, ZMachine, ComputeCapacity, DiskMount };
