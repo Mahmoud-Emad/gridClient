@@ -1,0 +1,13 @@
+{
+  "name": "@gridclient/xyz",
+  "author": "Mahmoud Emad",
+  "license": "ISC",
+  "version": "1.0.0",
+  "private": false,
+  "scripts": {
+    "script": "npx ts-node run.ts "
+  },
+  "dependencies": {
+    "await-lock": "^2.2.2"
+  }
+}
