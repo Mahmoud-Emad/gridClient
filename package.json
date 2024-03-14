@@ -8,6 +8,7 @@
     "script": "npx ts-node run.ts "
   },
   "dependencies": {
+    "@threefold/rmb_direct_client": "^2.3.2",
     "await-lock": "^2.2.2"
   }
 }

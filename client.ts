@@ -1,21 +1,25 @@
 import {
   DeploymentOptions,
   GridSetOptions,
+  KeypairType,
   WorkloadTypes,
 } from "./utils/types";
 import { Validators, isClientConnected } from "./utils/validators";
-import { Deployment } from "./workloads/deployment";
+import { Deployment, SignatureRequest, SignatureRequirement } from "./workloads/deployment";
 import { Workload, ZMount, Network, ZMachine } from "./workloads/workloads";
 import AwaitLock from "await-lock";
+import { Client as RMBClient } from "@threefold/rmb_direct_client";
+
 
 const chainURL = "wss://tfchain.dev.grid.tf/ws";
 const relayURL = "wss://relay.dev.grid.tf";
-const accountM =
+const mnemonic =
   "actual reveal dish guilt inner film scheme between lonely myself material replace";
 
 class GridClient {
   deployments: Deployment[];
   lock: AwaitLock;
+  rmbClient: RMBClient;
 
   constructor() {
     this.deployments = [];
@@ -23,6 +27,10 @@ class GridClient {
   }
 
   async connect() {
+    const rmbClient = new RMBClient(chainURL, relayURL, mnemonic, "test", KeypairType.sr25519, 5)
+    this.rmbClient = rmbClient;
+    this.rmbClient.connect()
+    this.log("Client connected!")
     isClientConnected.value = true;
   }
 
@@ -37,10 +45,12 @@ class GridClient {
   @Validators.checkConnection()
   async deploy(options: GridSetOptions) {
     await this.lock.acquireAsync();
+    console.log("Lock acquired");
     try {
       this.set({ deployment: options.deployment });
     } finally {
       this.lock.release();
+      console.log("Lock released");
     }
   }
 
@@ -48,6 +58,11 @@ class GridClient {
   delete(_options: DeploymentOptions) {
     console.log("Deleting...");
   }
+
+  log(message: string){
+    console.log(`|+| ${message}`);
+  };
+  
 }
 
 export {
@@ -60,4 +75,6 @@ export {
   WorkloadTypes,
   DeploymentOptions,
   GridSetOptions,
+  SignatureRequest,
+  SignatureRequirement
 };

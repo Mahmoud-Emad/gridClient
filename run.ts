@@ -7,6 +7,8 @@ import {
   WorkloadTypes,
   ZMount,
   ZMachine,
+  SignatureRequest,
+  SignatureRequirement,
 } from "./client";
 
 async function main() {
@@ -46,7 +48,7 @@ async function main() {
     gpu: [],
     mounts: zmount.meta.mounts,
     network: znet.meta,
-    rootFS: 45411,
+    size: 45411,
   });
 
   const workload = new Workload({
@@ -55,6 +57,17 @@ async function main() {
     name: "",
     version: 0,
   });
+
+  const signatureRequest = new SignatureRequest({
+    required: false,
+    twin_id: 143,
+    weight: 1
+  })
+
+  const signatureRequirement = new SignatureRequirement({
+    requests: [signatureRequest],
+    weight_required: 1
+  })
 
   // Set the network workload
   workload.set(WorkloadTypes.network, znet.meta)
@@ -70,12 +83,11 @@ async function main() {
     twin_id: 143,
     version: 0,
     workloads: workload.getAllWorkloads(),
+    signatureRequirement: signatureRequirement,
   });
 
   await grid.connect()
   await grid.deploy({ deployment: deployment });
-  console.log("deployments", grid.deployments);
-  console.log("workloads", grid.deployments[0].data.workloads);
 }
 
 main();

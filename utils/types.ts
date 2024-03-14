@@ -7,6 +7,7 @@ export interface DeploymentOptions {
   description: string;
   expiration: number;
   workloads: WorkloadData[];
+  signatureRequirement: SignatureRequirementData
 }
 
 export interface GridSetOptions {
@@ -50,7 +51,7 @@ export interface GPUData {}
 export interface ZMachineData {
   flist: string;
   network: NetworkData;
-  rootFS: number;
+  size: number; // Root file system
   mounts: DiskMountData[];
   entrypoint: string;
   compute_capacity: ComputeCapacityData;
@@ -59,9 +60,25 @@ export interface ZMachineData {
   gpu: GPUData[];
 }
 
+export interface SignatureRequestData {
+  twin_id: number;
+  weight: number;
+  required: boolean;
+}
+
+export interface SignatureRequirementData {
+  weight_required: number;
+  requests: SignatureRequestData[];
+}
+
 export enum WorkloadTypes {
   zmachine = "zmachine",
   zmount = "zmount",
   network = "network",
   ip = "ip",
+}
+
+export enum KeypairType {
+  sr25519 = "sr25519",
+  ed25519 = "ed25519",
 }
