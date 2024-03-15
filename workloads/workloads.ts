@@ -130,7 +130,12 @@ class DiskMount implements DiskMountData {
     return this.meta;
   }
 
-  challenge() {}
+  challenge() {
+    let out = "";
+    out += this.name;
+    out += this.mountpoint;
+    return out
+  }
 }
 
 class ZMachine implements ZMachineData {
@@ -165,11 +170,24 @@ class ZMachine implements ZMachineData {
     let out = "";
     out += `${this.flist}`;
     out += `${this.network.challenge()}`;
-    out += `${this.size}`;
+    out += `${this.size || "0"}`;
     out += `${this.compute_capacity.challenge()}`;
 
     for (let i = 0; i < this.mounts.length; i++) {
       out += this.mounts[i].challenge();
+    }
+
+    out += this.entrypoint;
+
+    for (const key of Object.keys(this.env).sort()) {
+      out += key;
+      out += "=";
+      out += this.env[key];
+      if (this.gpu) {
+        for (const __gpu of this.gpu) {
+          out += __gpu;
+        }
+      }
     }
 
     return out;

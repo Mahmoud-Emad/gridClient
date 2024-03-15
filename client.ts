@@ -1,4 +1,5 @@
 import {
+  ClientOptions,
   DeploymentOptions,
   GridSetOptions,
   KeypairType,
@@ -20,34 +21,43 @@ import {
 } from "./workloads/workloads";
 import AwaitLock from "await-lock";
 import { Client as RMBClient } from "@threefold/rmb_direct_client";
-
-const chainURL = "wss://tfchain.dev.grid.tf/ws";
-const relayURL = "wss://relay.dev.grid.tf";
-const mnemonic =
-  "actual reveal dish guilt inner film scheme between lonely myself material replace";
+import { Client as TFClient, Contract } from "@threefold/tfchain_client";
 
 class GridClient {
   deployments: Deployment[];
   lock: AwaitLock;
   rmbClient: RMBClient;
+  tfClient: TFClient;
 
   constructor() {
     this.deployments = [];
     this.lock = new AwaitLock();
   }
 
-  async connect() {
+  async connect(options: ClientOptions) {
     const rmbClient = new RMBClient(
-      chainURL,
-      relayURL,
-      mnemonic,
+      options.chainURL,
+      options.relayURL,
+      options.mnemonic,
       "test",
       KeypairType.sr25519,
       5
     );
+
     this.rmbClient = rmbClient;
     this.rmbClient.connect();
-    this.log("Client connected!");
+    this.log("RMB client connected!");
+
+    const tfClient = new TFClient({
+      url: options.chainURL,
+      mnemonicOrSecret: options.mnemonic,
+      keypairType: KeypairType.sr25519,
+      keepReconnecting: true,
+    });
+    this.tfClient = tfClient;
+    await this.tfClient.connect();
+
+    this.log("TFChain client connected!");
     isClientConnected.value = true;
   }
 
@@ -61,13 +71,52 @@ class GridClient {
 
   @Validators.checkConnection()
   async deploy(options: GridSetOptions) {
+    this.log("Deploying deployment: " + options.deployment.meta);
+
     await this.lock.acquireAsync();
-    console.log("Lock acquired");
+    this.log("Lock acquired");
+
     try {
-      this.set({ deployment: options.deployment });
+      const hash = options.deployment.challengeHash();
+      this.log("Deployment hash: " + hash);
+  
+      this.log("Creating contract");
+      const contract = await (
+        await this.tfClient.contracts.createNode({
+          hash,
+          numberOfPublicIps: 0,
+          nodeId: options.nodeId,
+          solutionProviderId: 1,
+          data: JSON.stringify({
+            version: 3,
+            type: "vm",
+            name: "myvm",
+            projectName: "vm/myvm",
+          }),
+        })
+      ).apply();
+      this.log("Contract created!: " + contract);
+  
+      options.deployment.contract_id = contract.contractId;
+      options.deployment.sign(options.twinId, options.mnemonic, KeypairType.sr25519);
+      options.deployment.contract = contract;
+
+      this.set({ deployment: options.deployment, nodeId: options.nodeId, twinId: options.twinId, mnemonic: options.mnemonic });
+
+      const deployMessageID = await this.rmbClient.send(
+        "zos.deployment.deploy",
+        JSON.stringify(options.deployment.meta),
+        12,
+        1,
+        3
+      );
+
+      this.log("Message id " + deployMessageID);
+      const deployMessageReply = await this.rmbClient.read(deployMessageID);
+      this.log("Message reply " + deployMessageReply);
     } finally {
       this.lock.release();
-      console.log("Lock released");
+      this.log("Lock released");
     }
   }
 
@@ -95,4 +144,5 @@ export {
   ComputeCapacity,
   DiskMount,
   SignatureRequirement,
+  Contract
 };

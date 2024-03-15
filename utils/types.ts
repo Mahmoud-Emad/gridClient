@@ -7,23 +7,30 @@ import {
   ZMount,
   ComputeCapacity,
   DiskMount,
+  Contract,
 } from "../client";
+import { Signature } from "../workloads/deployment";
 
-export interface DeploymentOptions {
+interface DeploymentOptions {
   version: number;
   twin_id: number;
   metadata: string;
   description: string;
   expiration: number;
   workloads: Workload[];
-  signatureRequirement: SignatureRequirement;
+  signature_requirement: SignatureRequirement;
+  contract_id?: number;
+  contract?: Contract;
 }
 
-export interface GridSetOptions {
+interface GridSetOptions {
   deployment: Deployment;
+  nodeId: number;
+  twinId: number;
+  mnemonic: string;
 }
 
-export interface WorkloadData {
+interface WorkloadData {
   version: number;
   name: string;
   type?: WorkloadTypes;
@@ -32,7 +39,7 @@ export interface WorkloadData {
   description: string;
 }
 
-export interface NetworkData {
+interface NetworkData {
   subnet: string;
   ip_range: string;
   wireguard_private_key: string;
@@ -40,24 +47,24 @@ export interface NetworkData {
   peers: string[];
 }
 
-export interface ZMountData {
+interface ZMountData {
   size: number;
   mounts: DiskMount[];
 }
 
-export interface DiskMountData {
+interface DiskMountData {
   name: string;
   mountpoint: string;
 }
 
-export interface ComputeCapacityData {
+interface ComputeCapacityData {
   cpu: number;
   memory: number;
 }
 
-export interface GPUData {}
+interface GPUData {}
 
-export interface ZMachineData {
+interface ZMachineData {
   flist: string;
   network: Network;
   size: number; // Root file system
@@ -69,25 +76,51 @@ export interface ZMachineData {
   gpu: GPUData[];
 }
 
-export interface SignatureRequestData {
+interface SignatureRequestData {
   twin_id: number;
   weight: number;
   required: boolean;
 }
 
-export interface SignatureRequirementData {
+interface SignatureRequirementData {
   weight_required: number;
   requests: SignatureRequestData[];
+  signatures: Signature[];
 }
 
-export enum WorkloadTypes {
+enum WorkloadTypes {
   zmachine = "zmachine",
   zmount = "zmount",
   network = "network",
   ip = "ip",
 }
 
-export enum KeypairType {
+enum KeypairType {
   sr25519 = "sr25519",
   ed25519 = "ed25519",
+}
+
+interface ClientOptions {
+  chainURL: string;
+  relayURL: string;
+  mnemonic: string;
+  twinId: number;
+}
+
+export {
+  Contract,
+  KeypairType,
+  WorkloadTypes,
+  SignatureRequirementData,
+  SignatureRequestData,
+  ZMachineData,
+  GPUData,
+  ComputeCapacityData,
+  DiskMountData,
+  ZMountData,
+  GridSetOptions,
+  NetworkData,
+  WorkloadData,
+  ClientOptions,
+  DeploymentOptions
 }

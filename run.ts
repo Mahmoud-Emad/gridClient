@@ -1,4 +1,3 @@
-import { ComputeCapacityData } from "./utils/types";
 import {
   Deployment,
   GridClient,
@@ -12,6 +11,10 @@ import {
   ComputeCapacity,
   DiskMount,
 } from "./client";
+
+import * as dotenv from "dotenv";
+
+dotenv.config(); // Load all env vars.
 
 async function main() {
   const grid = new GridClient();
@@ -27,11 +30,11 @@ async function main() {
   });
 
   const znet = new Network({
-    ip_range: "",
+    subnet: "10.20.2.0/24",
+    ip_range: "10.20.0.0/16",
+    wireguard_private_key: process.env.wireguardPrivateKey,
+    wireguard_listen_port: 18965,
     peers: [],
-    subnet: "",
-    wireguard_listen_port: 5000,
-    wireguard_private_key: "",
   });
 
   const computeCapacity = new ComputeCapacity({
@@ -69,6 +72,7 @@ async function main() {
   const signatureRequirement = new SignatureRequirement({
     requests: [signatureRequest],
     weight_required: 1,
+    signatures: []
   });
 
   // Set the network workload
@@ -101,8 +105,6 @@ async function main() {
     type: WorkloadTypes.zmachine,
   });
 
-  console.log("workloads", workload.all());
-
   const deployment = new Deployment({
     description: "Some description",
     expiration: 15,
@@ -110,13 +112,19 @@ async function main() {
     twin_id: 143,
     version: 0,
     workloads: workload.all(),
-    signatureRequirement: signatureRequirement,
+    signature_requirement: signatureRequirement,
   });
 
   console.log("workloads", workload.allData());
 
-  // await grid.connect()
-  // await grid.deploy({ deployment: deployment });
+  await grid.connect({
+    chainURL: process.env.chainURL,
+    relayURL: process.env.relayURL,
+    mnemonic: process.env.mnemonic,
+    twinId: +process.env.twinId
+  })
+
+  await grid.deploy({ deployment: deployment, nodeId: 11, twinId: +process.env.twinId, mnemonic: process.env.mnemonic });
 }
 
 main();

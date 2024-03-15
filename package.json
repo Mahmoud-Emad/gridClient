@@ -9,6 +9,9 @@
   },
   "dependencies": {
     "@threefold/rmb_direct_client": "^2.3.2",
-    "await-lock": "^2.2.2"
+    "@types/md5": "^2.3.2",
+    "await-lock": "^2.2.2",
+    "dotenv": "^16.4.5",
+    "md5": "^2.3.0"
   }
 }
