@@ -1,11 +1,7 @@
 import {
   Deployment,
-  Network,
   SignatureRequirement,
   Workload,
-  ZMachine,
-  ZMount,
-  ComputeCapacity,
   DiskMount,
   Contract,
 } from "../client";
@@ -34,47 +30,12 @@ interface WorkloadData {
   version: number;
   name: string;
   type?: WorkloadTypes;
-  data?: ZMount | Network | ZMachine;
+  // data?: ZMount | Network | ZMachine;
   metadata: string;
   description: string;
 }
 
-interface NetworkData {
-  subnet: string;
-  ip_range: string;
-  wireguard_private_key: string;
-  wireguard_listen_port: number;
-  peers: string[];
-}
-
-interface ZMountData {
-  size: number;
-  mounts: DiskMount[];
-}
-
-interface DiskMountData {
-  name: string;
-  mountpoint: string;
-}
-
-interface ComputeCapacityData {
-  cpu: number;
-  memory: number;
-}
-
 interface GPUData {}
-
-interface ZMachineData {
-  flist: string;
-  network: Network;
-  size: number; // Root file system
-  mounts: DiskMount[];
-  entrypoint: string;
-  compute_capacity: ComputeCapacity;
-  env: object;
-  corex: boolean;
-  gpu: GPUData[];
-}
 
 interface SignatureRequestData {
   twin_id: number;
@@ -113,14 +74,9 @@ export {
   WorkloadTypes,
   SignatureRequirementData,
   SignatureRequestData,
-  ZMachineData,
   GPUData,
-  ComputeCapacityData,
-  DiskMountData,
-  ZMountData,
   GridSetOptions,
-  NetworkData,
   WorkloadData,
   ClientOptions,
-  DeploymentOptions
-}
+  DeploymentOptions,
+};

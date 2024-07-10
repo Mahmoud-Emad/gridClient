@@ -13,10 +13,6 @@ import {
 } from "./workloads/deployment";
 import {
   Workload,
-  ZMount,
-  Network,
-  ZMachine,
-  ComputeCapacity,
   DiskMount,
 } from "./workloads/workloads";
 import AwaitLock from "await-lock";
@@ -134,14 +130,10 @@ export {
   Deployment,
   GridClient,
   Workload,
-  ZMount,
-  Network,
-  ZMachine,
   WorkloadTypes,
   DeploymentOptions,
   GridSetOptions,
   SignatureRequest,
-  ComputeCapacity,
   DiskMount,
   SignatureRequirement,
   Contract

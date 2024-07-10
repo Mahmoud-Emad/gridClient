@@ -1,66 +1,49 @@
-import {
-  Deployment,
-  GridClient,
-  Network,
-  Workload,
-  WorkloadTypes,
-  ZMount,
-  ZMachine,
-  SignatureRequest,
-  SignatureRequirement,
-  ComputeCapacity,
-  DiskMount,
-} from "./client";
+import { Deployment, GridClient, SignatureRequest, SignatureRequirement, Workload, WorkloadTypes } from "./client";
 
 import * as dotenv from "dotenv";
+import { DiskMountModel, ZMountWorkload } from "./models/disks";
+import { ZMachineModel } from "./models/machines";
+import { ComputeCapacityModel } from "./models/capacity";
+import { ZMachineNetworkModel } from "./models/networks";
 
 dotenv.config(); // Load all env vars.
 
 async function main() {
   const grid = new GridClient();
-
-  const mountDisk = new DiskMount({
+  const computeCapacity = new ComputeCapacityModel({ cpu: 1, memory: 1024 });
+  const mountDisk = new DiskMountModel({
     name: "disk1",
     mountpoint: "/mnt/data",
   });
 
-  const zmount = new ZMount({
+  const zmountWorkload = new ZMountWorkload({
     size: 152154151,
-    mounts: [mountDisk],
+    mounts: [mountDisk.getData(),],
   });
 
-  const znet = new Network({
-    subnet: "10.20.2.0/24",
-    ip_range: "10.20.0.0/16",
-    wireguard_private_key: process.env.wireguardPrivateKey,
-    wireguard_listen_port: 18965,
-    peers: [],
+  const machineNetwork = new ZMachineNetworkModel({
+    interfaces: [
+      {
+        ip: "10.20.2.2",
+        network: "MachineNetwork",
+        planetary: true,
+        public_ip: "",
+      },
+    ],
   });
 
-  const computeCapacity = new ComputeCapacity({
-    cpu: 1,
-    memory: 2048,
-  });
-
-  const zmachine = new ZMachine({
+  const zmachine = new ZMachineModel({
     flist: "https://hub.grid.tf/tf-official-vms/ubuntu-20.04-lts.flist",
-    compute_capacity: computeCapacity,
+    compute_capacity: computeCapacity.getData(),
     corex: false,
     entrypoint: "/init.sh",
     env: {
       Key: "Value",
     },
     gpu: [],
-    mounts: zmount.mounts,
-    network: znet,
+    mounts: zmountWorkload.mounts,
+    network: machineNetwork.getData(),
     size: 45411,
-  });
-
-  const workload = new Workload({
-    description: "Some description",
-    metadata: "",
-    name: "",
-    version: 0,
   });
 
   const signatureRequest = new SignatureRequest({
@@ -75,33 +58,19 @@ async function main() {
     signatures: []
   });
 
-  // Set the network workload
-  workload.set({
-    description: "Setting network",
-    metadata: "MetaData",
-    name: "MyNet",
+  const workload = new Workload({
+    description: "Some description",
+    metadata: "",
+    name: "",
     version: 0,
-    data: znet,
-    type: WorkloadTypes.network,
   });
 
-  // Set the zmount workload
-  workload.set({
-    description: "Setting zmount",
-    metadata: "MetaData",
-    name: "MyZmount",
-    version: 0,
-    data: zmount,
-    type: WorkloadTypes.zmount,
-  });
-
-  // Set the zmachine workload
   workload.set({
     description: "Setting zmachine",
     metadata: "MetaData",
     name: "MyZmachine",
     version: 0,
-    data: zmachine,
+    // data: zmachine.getData(),
     type: WorkloadTypes.zmachine,
   });
 
@@ -114,8 +83,6 @@ async function main() {
     workloads: workload.all(),
     signature_requirement: signatureRequirement,
   });
-
-  console.log("workloads", workload.allData());
 
   await grid.connect({
     chainURL: process.env.chainURL,
