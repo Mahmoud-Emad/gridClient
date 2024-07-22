@@ -25,10 +25,10 @@ class DiskMountModel implements DiskMountData {
   }
 }
 
-class ZMountWorkload implements ZMountData {
+class ZMountModel implements ZMountData {
   size: number;
   mounts: DiskMountData[];
-  private data: ZMountData;
+  protected data: ZMountData;
 
   constructor(data: ZMountData) {
     this.data = data;
@@ -39,12 +39,11 @@ class ZMountWorkload implements ZMountData {
   getData(): ZMountData {
     return this.data;
   }
-
-  challenge() {}
 }
 
 export {
   DiskMountModel,
   DiskMountData,
-  ZMountWorkload,
+  ZMountModel,
+  ZMountData,
 }

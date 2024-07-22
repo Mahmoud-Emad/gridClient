@@ -7,23 +7,27 @@ interface NetworkData {
 }
 
 interface ZMachineNetworkData {
+  planetary: boolean;
+  public_ip: string;
   interfaces: ZMachineNetworkInterfaceData[];
 }
 
 interface ZMachineNetworkInterfaceData {
   network: string;
   ip: string;
-  planetary: boolean;
-  public_ip: string;
 }
 
 class ZMachineNetworkModel implements ZMachineNetworkData {
   private data: ZMachineNetworkData;
   interfaces: ZMachineNetworkInterfaceData[];
+  planetary: boolean;
+  public_ip: string;
 
   constructor(data: ZMachineNetworkData) {
-    this.data = data
-    this.interfaces = this.data.interfaces
+    this.data = data;
+    this.interfaces = this.data.interfaces;
+    this.planetary = this.data.planetary;
+    this.public_ip = this.data.public_ip;
   }
 
   getData(): ZMachineNetworkData {
@@ -31,7 +35,7 @@ class ZMachineNetworkModel implements ZMachineNetworkData {
   }
 }
 
-class NetworkWorkload implements NetworkData {
+class ZnetModel implements NetworkData {
   private meta: NetworkData;
   subnet: string;
   ip_range: string;
@@ -51,6 +55,9 @@ class NetworkWorkload implements NetworkData {
   getData(): NetworkData {
     return this.meta;
   }
+}
+
+class NetworkWorkload extends ZnetModel {
   challenge() {}
 }
 
@@ -60,4 +67,5 @@ export {
   ZMachineNetworkModel,
   NetworkWorkload,
   NetworkData,
-}
+  ZnetModel,
+};

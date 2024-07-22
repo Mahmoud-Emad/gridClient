@@ -1,18 +1,25 @@
-import { ComputeCapacityData } from "../models/capacity";
-import { DiskMountData, ZMountWorkload } from "../models/disks";
-import { NetworkWorkload } from "../models/networks";
+import { ZMountData } from "../models/disks";
+import { ZMachineData } from "../models/machines";
+import { NetworkData } from "../models/networks";
 import {
-  WorkloadData,
   WorkloadTypes,
-  GPUData,
 } from "../utils/types";
+
+interface WorkloadData {
+  version: number;
+  name: string;
+  type?: WorkloadTypes;
+  data?: ZMountData | NetworkData | ZMachineData;
+  metadata: string;
+  description: string;
+}
 
 class Workload implements WorkloadData {
   private meta: WorkloadData;
   version: number;
   name: string;
   type?: WorkloadTypes;
-  // data: ZMountWorkload | NetworkWorkload | ZMachine;
+  data: ZMountData | NetworkData | ZMachineData;
   metadata: string;
   description: string;
   private __workloads: Workload[] = [];
@@ -23,7 +30,7 @@ class Workload implements WorkloadData {
     this.version = meta.version;
     this.name = meta.name;
     this.type = meta.type;
-    // this.data = meta.data;
+    this.data = meta.data;
     this.metadata = meta.metadata;
     this.description = meta.description;
   }
@@ -43,7 +50,7 @@ class Workload implements WorkloadData {
       name: meta.name,
       version: meta.version,
       type: meta.type,
-      // data: meta.data,
+      data: meta.data,
     });
 
     this.__workloads.push(workload);
@@ -56,26 +63,26 @@ class Workload implements WorkloadData {
   }
 }
 
-class DiskMount implements DiskMountData {
-  private meta: DiskMountData;
-  name: string;
-  mountpoint: string;
+// class DiskMount implements DiskMountData {
+//   private meta: DiskMountData;
+//   name: string;
+//   mountpoint: string;
 
-  constructor(meta: DiskMountData) {
-    this.name = meta.name;
-    this.mountpoint = meta.mountpoint;
-  }
+//   constructor(meta: DiskMountData) {
+//     this.name = meta.name;
+//     this.mountpoint = meta.mountpoint;
+//   }
 
-  getData(): DiskMountData {
-    return this.meta;
-  }
+//   getData(): DiskMountData {
+//     return this.meta;
+//   }
 
-  challenge() {
-    let out = "";
-    out += this.name;
-    out += this.mountpoint;
-    return out
-  }
-}
+//   challenge() {
+//     let out = "";
+//     out += this.name;
+//     out += this.mountpoint;
+//     return out
+//   }
+// }
 
-export { Workload, DiskMount, };
+export { Workload, WorkloadData };

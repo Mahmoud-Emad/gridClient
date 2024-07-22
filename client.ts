@@ -13,14 +13,13 @@ import {
 } from "./workloads/deployment";
 import {
   Workload,
-  DiskMount,
 } from "./workloads/workloads";
 import AwaitLock from "await-lock";
 import { Client as RMBClient } from "@threefold/rmb_direct_client";
 import { Client as TFClient, Contract } from "@threefold/tfchain_client";
 
 class GridClient {
-  deployments: Deployment[];
+  deployments: DeploymentOptions[];
   lock: AwaitLock;
   rmbClient: RMBClient;
   tfClient: TFClient;
@@ -62,12 +61,12 @@ class GridClient {
   }
 
   private set(options: GridSetOptions) {
-    this.deployments.push(options.deployment);
+    this.deployments.push(options.deployment.data);
   }
 
   @Validators.checkConnection()
   async deploy(options: GridSetOptions) {
-    this.log("Deploying deployment: " + options.deployment.meta);
+    this.log("Deploying deployment: " + options.deployment.data);
 
     await this.lock.acquireAsync();
     this.log("Lock acquired");
@@ -86,8 +85,8 @@ class GridClient {
           data: JSON.stringify({
             version: 3,
             type: "vm",
-            name: "myvm",
-            projectName: "vm/myvm",
+            name: options.deployment.name,
+            projectName: `vm/${options.deployment.name}`,
           }),
         })
       ).apply();
@@ -101,9 +100,9 @@ class GridClient {
 
       const deployMessageID = await this.rmbClient.send(
         "zos.deployment.deploy",
-        JSON.stringify(options.deployment.meta),
-        12,
-        1,
+        JSON.stringify(options.deployment.data),
+        21, // Node twin ID
+        options.deployment.expiration / 60,
         3
       );
 
@@ -134,7 +133,6 @@ export {
   DeploymentOptions,
   GridSetOptions,
   SignatureRequest,
-  DiskMount,
   SignatureRequirement,
-  Contract
+  Contract,
 };
